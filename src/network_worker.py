@@ -33,7 +33,10 @@ class PythonpingAdapter(NetworkWorker):
     def check_port(self, host: str, port: int) -> PortInfo:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         start = time.time()
-        conn_res = sock.connect((host, port))
+        try:
+            conn_res = sock.connect((host, port))
+        except Exception:
+            conn_res = 1
         measured_time = time.time() - start
         port_state = PortState.OPENED if conn_res == 0 else PortState.UNKNOWN
         sock.close()
