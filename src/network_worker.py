@@ -10,7 +10,7 @@ socket.setdefaulttimeout(SOCKET_CONN_TIMEOUT)
 
 
 class PortState(enum.Enum):
-    OPENED, UNKNOWN, NONE = range(3)
+    OPENED, UNKNOWN = range(2)
 
 
 @dataclass
@@ -34,14 +34,24 @@ class PythonpingAdapter(NetworkWorker):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         start = time.time()
         try:
-            conn_res = sock.connect((host, port))
+            conn_res = sock.connect_ex((host, port))
         except Exception:
             conn_res = 1
-        measured_time = time.time() - start
+        measured_time = round((time.time() - start) * 1000, 0)
         port_state = PortState.OPENED if conn_res == 0 else PortState.UNKNOWN
         sock.close()
         return PortInfo(host, port, measured_time, port_state)
 
     def send_ping(self, host: str) -> PortInfo:
-        res = ping(host, count=1)
-        return PortInfo(host, None, res.rtt_max, PortState.NONE)
+        port_state = PortState.OPENED
+        res = None
+        try:
+            res = ping(host, count=1)
+        except:
+            port_state = PortState.UNKNOWN
+        return PortInfo(
+            host,
+            None,
+            round(res.rtt_max * 1000, 0) if res is not None else 0,
+            port_state,
+        )
