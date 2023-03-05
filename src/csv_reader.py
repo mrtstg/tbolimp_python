@@ -21,6 +21,13 @@ class Host:
     address: str
     ports: list[int]
 
+    def generate_name(self) -> str:
+        return (
+            ("Домен %s" % self.address)
+            if self.type == HostType.DOMAIN
+            else ("IP-адрес %s" % self.address)
+        )
+
 
 class CsvFileReader:
     file_path: str
