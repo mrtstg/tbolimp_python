@@ -12,6 +12,16 @@ socket.setdefaulttimeout(SOCKET_CONN_TIMEOUT)
 class PortState(enum.Enum):
     OPENED, UNKNOWN = range(2)
 
+    @staticmethod
+    def to_string(value: int):
+        match value:
+            case PortState.OPENED:
+                return "opened"
+            case PortState.UNKNOWN:
+                return "unknown"
+            case _:
+                raise Exception("unimplemented")
+
 
 @dataclass
 class PortInfo:
@@ -47,7 +57,12 @@ class PythonpingAdapter(NetworkWorker):
         res = None
         try:
             res = ping(host, count=1)
-        except:
+        except PermissionError:
+            print(
+                "У программы нет доступа на отправку ping-пакетов, запустите ее от имени администратора!"
+            )
+            port_state = PortState.UNKNOWN
+        except Exception:
             port_state = PortState.UNKNOWN
         return PortInfo(
             host,
