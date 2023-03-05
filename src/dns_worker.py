@@ -25,9 +25,6 @@ class DNSWorker:
     def resolve_ipv6(self, _: str) -> list[str]:
         raise Exception("Not implemented")
 
-    def is_resolvable(self, _: str) -> bool:
-        raise Exception("Not implemented")
-
 
 class DNSPythonAdapter(DNSWorker):
     resolver: dns.resolver.Resolver
@@ -64,11 +61,3 @@ class DNSPythonAdapter(DNSWorker):
 
     def resolve_ipv6(self, domain: str) -> list[str]:
         return self._get_records_as_list(domain, "AAAA")
-
-    def is_resolvable(self, domain: str) -> bool:
-        try:
-            return bool(self.resolve_ipv4(domain) or self.resolve_ipv6(domain))
-        except (DomainNameNotFound, OtherDnsError, DomainNameNotAbsolute):
-            return False
-        except DnsResponseError:
-            return True
