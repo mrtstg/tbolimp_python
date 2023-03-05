@@ -53,8 +53,8 @@ class DNSPythonAdapter(DNSWorker):
             raise OtherDnsError("Доменное имя слишком длинное!")
         except dns.resolver.NoResolverConfiguration:
             raise OtherDnsError("Отсутствуют DNS-сервера для запроса!")
-        except Exception:
-            raise OtherDnsError("Неизвестная ошибка!")
+        except Exception as e:
+            raise OtherDnsError(e)
 
     def resolve_ipv4(self, domain: str) -> list[str]:
         return self._get_records_as_list(domain, "A")
