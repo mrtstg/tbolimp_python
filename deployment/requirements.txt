@@ -4,3 +4,4 @@ iniconfig==2.0.0
 packaging==23.0
 pluggy==1.0.0
 pytest==7.2.1
+pythonping==1.1.4
