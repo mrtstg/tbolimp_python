@@ -1,5 +1,6 @@
 import dns.resolver
 import dns.name
+from abc import abstractmethod, ABC
 
 
 class DomainNameNotAbsolute(Exception):
@@ -18,12 +19,13 @@ class OtherDnsError(Exception):
     pass
 
 
-class DNSWorker:
+class AbstractDNSWorker(ABC):
+    @abstractmethod
     def resolve_ipv4(self, _: str) -> list[str]:
         raise Exception("Not implemented")
 
 
-class DNSPythonAdapter(DNSWorker):
+class DNSPythonAdapter(AbstractDNSWorker):
     resolver: dns.resolver.Resolver
 
     def __init__(self):

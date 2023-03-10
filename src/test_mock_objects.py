@@ -1,6 +1,6 @@
 from dns_worker import (
     DNSPythonAdapter,
-    DNSWorker,
+    AbstractDNSWorker,
     DnsResponseError,
     DomainNameNotAbsolute,
     DomainNameNotFound,
@@ -8,7 +8,7 @@ from dns_worker import (
 )
 
 
-class MockDNSAdapter(DNSWorker):
+class MockDNSAdapter(AbstractDNSWorker):
     redirect: bool = False
 
     def __init__(self, redirect: bool = False):
