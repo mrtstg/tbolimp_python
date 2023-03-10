@@ -22,9 +22,6 @@ class DNSWorker:
     def resolve_ipv4(self, _: str) -> list[str]:
         raise Exception("Not implemented")
 
-    def resolve_ipv6(self, _: str) -> list[str]:
-        raise Exception("Not implemented")
-
 
 class DNSPythonAdapter(DNSWorker):
     resolver: dns.resolver.Resolver
@@ -58,6 +55,3 @@ class DNSPythonAdapter(DNSWorker):
 
     def resolve_ipv4(self, domain: str) -> list[str]:
         return self._get_records_as_list(domain, "A")
-
-    def resolve_ipv6(self, domain: str) -> list[str]:
-        return self._get_records_as_list(domain, "AAAA")
