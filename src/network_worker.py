@@ -57,6 +57,8 @@ class PythonpingAdapter(NetworkWorker):
         res = None
         try:
             res = ping(host, count=1)
+            if not res.success():
+                port_state = PortState.UNKNOWN
         except PermissionError:
             print(
                 "У программы нет доступа на отправку ping-пакетов, запустите ее от имени администратора!"
