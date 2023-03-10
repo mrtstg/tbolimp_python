@@ -5,6 +5,7 @@ from typing import IO, Generator
 from validators import validate_address, validate_row
 import enum
 from dataclasses import dataclass
+from dns_worker import AbstractDNSWorker
 
 
 class FileNotFound(Exception):
@@ -38,7 +39,7 @@ class CsvFileReader:
         yield file
         file.close()
 
-    def __init__(self, file_path: str, dns_adapter):
+    def __init__(self, file_path: str, dns_adapter: AbstractDNSWorker):
         if not os.path.exists(file_path):
             raise FileNotFound("Файл не найден!")
         self.file_path = file_path
