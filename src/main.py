@@ -49,12 +49,15 @@ def checkout_domain(domain: Host, network_adapter, dns_adapter):
         ipv4_addresses = dns_adapter.resolve_ipv4(domain.address)
     except (DomainNameNotFound):
         logger.error("Домен %s не найден." % domain)
+        time.sleep(1)
         return
     except (DnsResponseError, OtherDnsError) as e:
         logger.error("Ошибка со стороны DNS-серверов: " + str(e))
+        time.sleep(1)
         return
     except Exception as e:
         logger.error("Неизвестная ошибка: " + str(e))
+        time.sleep(1)
         return
 
     for addr in ipv4_addresses:
@@ -76,6 +79,8 @@ def main():
             time.sleep(CHECK_TIMEOUT)
         except KeyboardInterrupt:
             break
+        except Exception as e:
+            logger.error("Ошибка выполнения программы: %s" % e)
 
 
 if __name__ == "__main__":
