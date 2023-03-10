@@ -27,7 +27,10 @@ class DNSPythonAdapter(DNSWorker):
     resolver: dns.resolver.Resolver
 
     def __init__(self):
-        self.resolver = dns.resolver.Resolver()
+        try:
+            self.resolver = dns.resolver.Resolver()
+        except dns.resolver.NoResolverConfiguration:
+            raise OtherDnsError("У системы не настроены DNS-сервера!")
 
     def _get_records_as_list(self, domain: str, rec_type: str) -> list[str]:
         try:
