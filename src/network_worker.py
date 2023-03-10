@@ -9,6 +9,18 @@ SOCKET_CONN_TIMEOUT: int = int(os.environ.get("SOCKET_CONN_TIMEOUT", 5))
 socket.setdefaulttimeout(SOCKET_CONN_TIMEOUT)
 
 
+class PingOtherError(Exception):
+    pass
+
+
+class PingFailureError(Exception):
+    pass
+
+
+class PingAccessDenied(Exception):
+    pass
+
+
 class PortState(enum.Enum):
     OPENED, UNKNOWN = range(2)
 
@@ -58,14 +70,11 @@ class PythonpingAdapter(NetworkWorker):
         try:
             res = ping(host, count=1)
             if not res.success():
-                port_state = PortState.UNKNOWN
+                raise PingFailureError
         except PermissionError:
-            print(
-                "У программы нет доступа на отправку ping-пакетов, запустите ее от имени администратора!"
-            )
-            port_state = PortState.UNKNOWN
-        except Exception:
-            port_state = PortState.UNKNOWN
+            raise PingAccessDenied
+        except Exception as e:
+            raise PingOtherError(e)
         return PortInfo(
             host,
             None,
