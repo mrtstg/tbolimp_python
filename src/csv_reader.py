@@ -52,7 +52,11 @@ class CsvFileReader:
             for row_index, row in enumerate(csv_reader, 1):
                 if row_index == 1:
                     continue
-                validate_row(row, self.dns_adapter)
+                try:
+                    validate_row(row, self.dns_adapter)
+                except AssertionError as e:
+                    print(e)
+                    exit(-1)
                 processed_ports: list[int] = list(
                     map(
                         lambda x: int(x.strip()),
