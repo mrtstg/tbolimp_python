@@ -1,0 +1,9 @@
+Host;Ports
+almetpt.ru;
+almetpt.ru;80,443
+ya.ru;80
+stm.mrtstg.ru;80,443
+mrtstg.ru;80,8000,8080
+google.com;
+192.168.100.1;
+185.174.136.65;80,443,53
