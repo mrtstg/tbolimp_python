@@ -5,7 +5,13 @@ from dns_worker import (
     OtherDnsError,
 )
 from csv_reader import CsvFileReader, Host, HostType
-from network_worker import PythonpingAdapter, PortState
+from network_worker import (
+    PingAccessDenied,
+    PingOtherError,
+    PingFailureError,
+    PythonpingAdapter,
+    PortState,
+)
 import os
 import time
 from logger import get_logger
@@ -30,7 +36,20 @@ def checkout_address(host: Host, address: str, network_adapter, dns_adapter):
                 )
             )
     else:
-        res = network_adapter.send_ping(address)
+        try:
+            res = network_adapter.send_ping(address)
+        except (PingFailureError, PingOtherError):
+            logger.error(
+                "%s - адрес %s - ERROR [PING]" % (host.generate_name(), address)
+            )
+            time.sleep(1)
+            return
+        except PingAccessDenied:
+            logger.warn(
+                "У скрипта нет доступа к отправке ping-пакетов, запустите скрипт от лица администратора!"
+            )
+            time.sleep(1)
+            return
         logger.info(
             "%s - адрес %s - RTT %s ms [PING] %s"
             % (
@@ -65,9 +84,13 @@ def checkout_domain(domain: Host, network_adapter, dns_adapter):
 
 
 def main():
-    reader = CsvFileReader(os.environ.get("CSV_FILE", "data.csv"), DNSPythonAdapter())
+    try:
+        dns_adapter = DNSPythonAdapter()
+    except OtherDnsError as e:
+        logger.error(e)
+        return
+    reader = CsvFileReader(os.environ.get("CSV_FILE", "data.csv"), dns_adapter)
     network_adapter = PythonpingAdapter()
-    dns_adapter = DNSPythonAdapter()
     hosts = reader.read_hosts_list()
     while True:
         try:
