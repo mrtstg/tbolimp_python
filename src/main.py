@@ -12,7 +12,7 @@ from logger import get_logger
 from logging import DEBUG
 
 logger = get_logger(__name__, DEBUG)
-CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", 1))
+CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", 0))
 
 
 def checkout_address(host: Host, address: str, network_adapter, dns_adapter):
