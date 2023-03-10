@@ -4,6 +4,7 @@ from pythonping import ping
 import os
 from dataclasses import dataclass
 import enum
+from abc import ABC, abstractmethod
 
 SOCKET_CONN_TIMEOUT: int = int(os.environ.get("SOCKET_CONN_TIMEOUT", 5))
 socket.setdefaulttimeout(SOCKET_CONN_TIMEOUT)
@@ -43,15 +44,17 @@ class PortInfo:
     state: int  # but actually portstate member
 
 
-class NetworkWorker:
+class AbstractNetworkWorker(ABC):
+    @abstractmethod
     def check_port(self, host: str, port: int) -> PortInfo:
         raise Exception("Not implemented!")
 
+    @abstractmethod
     def send_ping(self, host: str) -> PortInfo:
         raise Exception("Not implemented!")
 
 
-class PythonpingAdapter(NetworkWorker):
+class PythonpingAdapter(AbstractNetworkWorker):
     def check_port(self, host: str, port: int) -> PortInfo:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         start = time.time()
